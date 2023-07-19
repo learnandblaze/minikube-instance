@@ -1,0 +1,173 @@
+#!/bin/sh
+
+# Install using the apt repository,Before you install Docker Engine for the first time on a new host machine, you need to set up the Docker repository.
+#
+#pt update && sudo apt upgrade
+#pt-get install ca-certificates curl gnupg
+#nstall -m 0755 -d /etc/apt/keyrings
+#fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+#hmod a+r /etc/apt/keyrings/docker.gpg
+#
+#
+# [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+# /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+# tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker Engine
+##sudo apt-get update
+# Install Prerequisite Packages
+##sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+# Add GPG Key
+##curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+# Add Docker Repository
+##sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+# Specify Installation Source
+##apt-cache policy docker-ce
+# Install Docker
+##sudo apt install docker-ce -y
+# Check Docker Status
+##sudo systemctl status docker
+
+# apt  install docker.io 
+# apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# To create the docker group and add your user:
+##sudo groupadd docker
+##sudo usermod -aG docker $USER
+
+# Docker to start on boot with systemd
+##sudo systemctl enable docker.service
+##sudo systemctl enable containerd.service
+
+
+##########################################################################################################
+##
+##  K8S    DATE JUL 8 2023
+##
+##########################################################################################################
+
+#!/bin/bash
+#
+# Update system packages
+#udo apt update
+#udo apt upgrade -y
+#
+# Install Docker
+#udo apt install -y docker.io
+#
+# Enable and start Docker service
+#udo systemctl enable docker
+#udo systemctl start docker
+#
+# Install kubeadm, kubelet, and kubectl
+#udo apt-get update && sudo apt-get install -y apt-transport-https curl
+#udo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+#udo echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+#udo apt-get update
+#udo apt-get install -y kubelet kubeadm kubectl
+#
+# Disable swap
+#udo sed -i '/ swap / s/^/#/' /etc/fstab
+#udo swapoff -a
+#
+# Initialize Kubernetes cluster
+#udo kubeadm init
+#
+# Set up kubeconfig for the current user
+# Line 78 , 84 87 Made changes to use sudo 
+#
+#kdir -p $HOME/.kube
+#udo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+#udo chown $(id -u):$(id -g) $HOME/.kube/config
+#
+# Install network add-on (Weave in this case, you can choose a different one)
+#udo kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+#
+# Allow scheduling pods on the master node (optional)
+#udo kubectl taint nodes --all node-role.kubernetes.io/master-
+#
+#cho "Kubernetes cluster has been successfully set up!"
+#
+#
+#/bootstrap.sh > bootstrap.log 2>&1
+
+##########################################################################################################
+
+
+# apt-get update -y
+## apt-get upgrade -y 
+## apt-get install curl
+## apt-get install apt-transport-https ca-certificates curl software-properties-common
+## apt install virtualbox virtualbox-ext-pack
+## https://storage.googleapis.com/minikube/release/latest/minikube-linux-64
+## cp minikube-linux-amd64 /usr/local/minikube
+## chmod 755 /usr/local/bin/minikube
+# minikube version
+
+
+# Update the system packages
+sudo apt update
+
+sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+# podman
+sudo apt install -y podman
+# qemu
+sudo apt install -y qemu-system-x86
+# Install Docker
+sudo apt install -y docker.io
+
+# Add the current user to the docker group
+#sudo usermod -aG docker $USER
+sudo groupadd docker
+sudo usermod -aG docker $USER 
+sudo service docker start
+
+# Install Snap
+sudo apt install -y snapd
+
+# Install kubectl via Snap
+sudo snap install kubectl --classic
+
+# Install kubectl
+sudo apt install -y kubectl
+# Install Minikube dependencies
+sudo apt install -y conntrack
+
+# Install crictl
+curl -LO https://github.com/kubernetes-sigs/cri-tools/releases/latest/download/crictl-<version>-linux-amd64.tar.gz
+tar -zxvf crictl-<version>-linux-amd64.tar.gz
+sudo install crictl /usr/local/bin/crictl
+rm crictl crictl-<version>-linux-amd64.tar.gz
+
+# Install Minikube
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+rm minikube-linux-amd64
+
+# Enable KVM2
+#sudo systemctl enable --now libvirtd
+# Add user to the group
+#sudo usermod -aG libvirt $USER
+#sudo usermod -aG kvm $USER
+
+
+
+# Create Minikube profile
+##minikube start -p minikube
+##minikube profile list
+# start Minikube with Docker driver and the "minikube" profile
+# sudo minikube start --driver=docker --profile=minikube
+
+# Start Minikube
+
+minikube start --driver=qemu2
+
+# sudo minikube start --driver=none
+# Configure kubectl to use Minikube cluster
+##eval $(sudo minikube docker-env)
+
+# Verify Minikube cluster
+sudo kubectl cluster-info
+echo "Kubernetes cluster has been successfully set up!"
+./bootstrap.sh > bootstrap.log 2>&1
